@@ -1,0 +1,59 @@
+#!/bin/bash
+FLUENTD_CONF=${FLUENTD_CONF:-"/opt/fluentd/conf/fluentd.conf"}
+INSTALL_BUILD_TOOLS=${INSTALL_BUILD_TOOLS:-"false"}
+BUILD_TOOLS='g++ gcc make ruby-dev'
+
+if [ "$INSTALL_BUILD_TOOLS" == "true" ]
+then
+  echo "Installing Build tools!"
+  apt-get update
+  apt-get install -y ruby $BUILD_TOOLS
+fi
+
+# is there a broken symlink in /var/log/containers?
+BROKEN_LINK="$(find /var/log/containers/ -name '*.log' -type l -xtype l -print -quit)"
+if [ -n "$BROKEN_LINK" ]; then
+  echo "/var/log/containers contains broken links"
+  # extract the containers/ directory targeted by the broken symlink
+  TARGET_DIR="$(readlink -m "$BROKEN_LINK" | sed 's/\(.*containers\).*/\1/')"
+  # create the parent of the target directory
+  mkdir -p "$(dirname "$TARGET_DIR")"
+  # symlink the /var/lib/docker/containers volume to the target
+  # directory, assuming that's how things are on the host machine
+  ln -s /var/lib/docker/containers "$TARGET_DIR"
+  echo "linked /var/lib/docker/containers to $TARGET_DIR"
+fi
+
+source /opt/fluentd/sbin/plugins
+source /opt/fluentd/sbin/sources
+source /opt/fluentd/sbin/filters/filters
+
+if [ -n "$DROP_FLUENTD_LOGS" ]
+then
+cat << EOF >> $FLUENTD_CONF
+<match fluent.**>
+  type null
+</match>
+EOF
+fi
+
+cat << EOF >> $FLUENTD_CONF
+<match **>
+  @type copy
+EOF
+
+source /opt/fluentd/sbin/stores/stores
+
+cat << EOF >> $FLUENTD_CONF
+</match>
+EOF
+
+if [ "$INSTALL_BUILD_TOOLS" == "true" ]
+then
+  echo "Removing Build tools!"
+  apt-get remove -y --auto-remove --purge $BUILD_TOOLS
+  apt-get clean
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man /usr/share/doc
+fi
+
+exec fluentd -c $FLUENTD_CONF

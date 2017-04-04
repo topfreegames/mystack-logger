@@ -1,2 +1,4 @@
-# mystack-logger
-The logger components of mystack
+mystack-logger
+==============
+
+The logger component of mystack
