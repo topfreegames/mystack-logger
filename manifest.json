@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+        "github.com/nsqio/go-nsq": {
+            "version": "^1.0.6"
+        },
+        "github.com/sirupsen/logrus": {
+            "version": "v0.11.5"
+        }
+    }
+}

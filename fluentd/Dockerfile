@@ -1,4 +1,4 @@
-FROM quay.io/deis/base:v0.3.6
+FROM quay.io/tfgco/mystack-base:v0.1.0
 
 COPY . /
 

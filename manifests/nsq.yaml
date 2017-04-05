@@ -17,7 +17,7 @@ spec:
     app: mystack-nsqd
 ---
 apiVersion: extensions/v1beta1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   labels:
     app: mystack-nsqd 

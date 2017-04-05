@@ -1,0 +1,201 @@
+{
+    "memo": "2ec32f1233a97f0b94de3b05ba3d1b8899d919880a3246f0e33199f2fa4f6eec",
+    "projects": [
+        {
+            "name": "github.com/fsnotify/fsnotify",
+            "version": "v1.4.2",
+            "revision": "629574ca2a5df945712d3079857300b5e4da0236",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/gorilla/context",
+            "version": "v1.1",
+            "revision": "1ea25387ff6f684839d82767c1733ff4d4d15d0a",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/gorilla/mux",
+            "version": "v1.3.0",
+            "revision": "392c28fe23e1c45ddba891b0320b3b5df220beea",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/hashicorp/hcl",
+            "branch": "master",
+            "revision": "630949a3c5fa3c613328e1b8256052cbc2327c9b",
+            "packages": [
+                ".",
+                "hcl/ast",
+                "hcl/parser",
+                "hcl/scanner",
+                "hcl/strconv",
+                "hcl/token",
+                "json/parser",
+                "json/scanner",
+                "json/token"
+            ]
+        },
+        {
+            "name": "github.com/inconshreveable/mousetrap",
+            "branch": "master",
+            "revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/magiconair/properties",
+            "version": "v1.7.2",
+            "revision": "f917359f079a3759162704eaa8caeec3d01d9f91",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/mitchellh/mapstructure",
+            "branch": "master",
+            "revision": "53818660ed4955e899c0bcafa97299a388bd7c8e",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/mreiferson/go-snappystream",
+            "version": "v0.2.3",
+            "revision": "028eae7ab5c4c9e2d1cb4c4ca1e53259bbe7e504",
+            "packages": [
+                ".",
+                "snappy-go"
+            ]
+        },
+        {
+            "name": "github.com/nsqio/go-nsq",
+            "version": "v1.0.6",
+            "revision": "d71fb89c9e0263aaed89645b0b168e11ccf597b1",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/pelletier/go-buffruneio",
+            "version": "v0.2.0",
+            "revision": "c37440a7cf42ac63b919c752ca73a85067e05992",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/pelletier/go-toml",
+            "version": "v0.5.0",
+            "revision": "13d49d4606eb801b8f01ae542b4afc4c6ee3d84a",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/sirupsen/logrus",
+            "version": "v0.11.5",
+            "revision": "ba1b36c82c5e05c4f912a88eab0dcd91a171688f",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/afero",
+            "branch": "master",
+            "revision": "9be650865eab0c12963d8753212f4f9c66cdcf12",
+            "packages": [
+                ".",
+                "mem"
+            ]
+        },
+        {
+            "name": "github.com/spf13/cast",
+            "version": "v1.0.0",
+            "revision": "ce135a4ebeee6cfe9a26c93ee0d37825f26113c7",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/cobra",
+            "branch": "master",
+            "revision": "7aeaa2cce6ae7e18d2a6ee597b60ee137e999bd9",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/jwalterweatherman",
+            "branch": "master",
+            "revision": "fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/pflag",
+            "branch": "master",
+            "revision": "9a906f17374922ed0f74e1b2f593d3723f2ffb00",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/viper",
+            "branch": "master",
+            "revision": "84f94806c67f59dd7ae87bc5351f7a9c94a4558d",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "golang.org/x/sys",
+            "branch": "master",
+            "revision": "493114f68206f85e7e333beccfabc11e98cba8dd",
+            "packages": [
+                "unix"
+            ]
+        },
+        {
+            "name": "golang.org/x/text",
+            "branch": "master",
+            "revision": "f4b4367115ec2de254587813edaa901bc1c723a8",
+            "packages": [
+                "internal/gen",
+                "internal/triegen",
+                "internal/ucd",
+                "transform",
+                "unicode/cldr",
+                "unicode/norm"
+            ]
+        },
+        {
+            "name": "gopkg.in/redis.v5",
+            "version": "v5.2.9",
+            "revision": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0",
+            "packages": [
+                ".",
+                "internal",
+                "internal/consistenthash",
+                "internal/hashtag",
+                "internal/pool",
+                "internal/proto"
+            ]
+        },
+        {
+            "name": "gopkg.in/yaml.v2",
+            "branch": "v2",
+            "revision": "a3f3340b5840cee44f372bddb5880fcbc419b46a",
+            "packages": [
+                "."
+            ]
+        }
+    ]
+}

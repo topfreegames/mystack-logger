@@ -1,0 +1,11 @@
+---
+stop-timeout: 30
+log-buffer-size: 1000
+nsqd:
+  url: localhost:4155
+  logs-topic: logs
+  handler-count: 30
+redis:
+  url: redis://:@localhost:6399
+  pipeline-timeout: 5
+  pipeline-length: 10
