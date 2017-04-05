@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: mystack-logger-fluentd
-        image: quay.io/tfgco/mystack-fluentd:0.2
+        image: quay.io/tfgco/mystack-fluentd:v1.0.0
         volumeMounts:
         - name: varlog
           mountPath: /var/log

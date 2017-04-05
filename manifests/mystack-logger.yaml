@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mystack-logger
+  name: mystack-logger
+  namespace: mystack
+spec:
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: mystack-logger
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mystack-logger
+  namespace: mystack
+  labels:
+    heritage: mystack
+spec:
+  selector:
+    matchLabels:
+      app: mystack-logger
+      heritage: mystack
+  template:
+    metadata:
+      name: mystack-logger
+      labels:
+        heritage: mystack
+        app: mystack-logger
+    spec:
+      containers:
+      - name: mystack-logger
+        ports:
+          - containerPort: 5000
+        image: quay.io/tfgco/mystack-logger:v0.1.0
+        env:
+        - name: MYSTACK_LOGGER_NSQD_URL
+          value: mystack-nsqd:4150
+        - name: MYSTACK_LOGGER_REDIS_URL
+          value: redis://:@mystack-redis:6379
