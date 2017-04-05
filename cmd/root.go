@@ -49,10 +49,9 @@ func initConfig() {
 		config.SetConfigFile(cfgFile)
 	}
 	config.SetConfigType("yaml")
-	config.SetEnvPrefix("MYSTACK_LOGGER")
+	config.SetEnvPrefix("mystack_logger")
 	config.AddConfigPath(".")
-	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	config.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
 	config.AutomaticEnv()
 
 	// If a config file is found, read it in.
