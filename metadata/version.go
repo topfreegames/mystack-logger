@@ -7,4 +7,4 @@
 package metadata
 
 //Version of the mystack API
-var Version = "0.1.0"
+var Version = "0.2.0"

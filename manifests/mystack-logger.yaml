@@ -36,7 +36,7 @@ spec:
       - name: mystack-logger
         ports:
           - containerPort: 5000
-        image: quay.io/tfgco/mystack-logger:v0.1.0
+        image: quay.io/tfgco/mystack-logger:v0.2.0
         env:
         - name: MYSTACK_LOGGER_NSQD_URL
           value: mystack-nsqd:4150

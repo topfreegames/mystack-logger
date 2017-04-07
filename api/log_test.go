@@ -13,7 +13,6 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/topfreegames/offers/metadata"
 )
 
 var _ = Describe("Log Handler", func() {
@@ -76,11 +75,6 @@ message 4
 `))
 				err := storageAdapter.Destroy("testapp2-testuser")
 				Expect(err).NotTo(HaveOccurred())
-			})
-
-			It("returns the version as a header", func() {
-				app.Router.ServeHTTP(recorder, request)
-				Expect(recorder.Header().Get("x-mystack-version")).To(Equal(metadata.Version))
 			})
 
 		})
