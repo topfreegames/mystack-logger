@@ -37,7 +37,7 @@ type messagePipeliner struct {
 	errCh         chan error
 }
 
-func newMessagePipeliner(bufferSize int, redisClient *r.Client, timeout time.Duration, errCh chan error) *messagePipeliner {
+func newMessagePipeliner(bufferSize int, redisClient r.Cmdable, timeout time.Duration, errCh chan error) *messagePipeliner {
 	return &messagePipeliner{
 		bufferSize:    bufferSize,
 		pipeline:      redisClient.Pipeline(),
@@ -67,10 +67,11 @@ func (mp messagePipeliner) execPipeline() {
 	}
 }
 
-type redisAdapter struct {
+// RedisAdapter struct
+type RedisAdapter struct {
 	started         bool
 	bufferSize      int
-	redisClient     *r.Client
+	RedisClient     r.Cmdable
 	redisURL        string
 	messageChannel  chan *message
 	stopCh          chan struct{}
@@ -81,7 +82,7 @@ type redisAdapter struct {
 
 // NewRedisStorageAdapter returns a pointer to a new instance of a redis-based storage.Adapter.
 func NewRedisStorageAdapter(config *viper.Viper) (Adapter, error) {
-	rsa := &redisAdapter{
+	rsa := &RedisAdapter{
 		messageChannel: make(chan *message),
 		stopCh:         make(chan struct{}),
 		config:         config,
@@ -97,17 +98,17 @@ func NewRedisStorageAdapter(config *viper.Viper) (Adapter, error) {
 	return rsa, nil
 }
 
-func (a *redisAdapter) configureRedis() error {
+func (a *RedisAdapter) configureRedis() error {
 	redisCfg, err := r.ParseURL(a.config.GetString("redis.url"))
 	if err != nil {
 		return err
 	}
 	redisClient := r.NewClient(redisCfg)
-	a.redisClient = redisClient
+	a.RedisClient = redisClient
 	return nil
 }
 
-func (a *redisAdapter) configure() error {
+func (a *RedisAdapter) configure() error {
 	a.loadConfigurationDefaults()
 	a.redisURL = a.config.GetString("redis.url")
 	a.pipelineTimeout = time.Duration(a.config.GetInt("redis.pipeline-timeout")) * time.Second
@@ -119,8 +120,8 @@ func (a *redisAdapter) configure() error {
 	return nil
 }
 
-func (a *redisAdapter) loadConfigurationDefaults() {
-	a.config.SetDefault("redis.url", "localhost:6399")
+func (a *RedisAdapter) loadConfigurationDefaults() {
+	a.config.SetDefault("redis.url", "redis://:@localhost:6399")
 	a.config.SetDefault("redis.pipeline-timeout", 1)
 	a.config.SetDefault("redis.pipeline-length", 20)
 	a.config.SetDefault("log-buffer-size", 1000)
@@ -128,11 +129,11 @@ func (a *redisAdapter) loadConfigurationDefaults() {
 
 // Start the storage adapter. Invocations of this function are not concurrency safe and multiple
 // serialized invocations have no effect.
-func (a *redisAdapter) Start() {
+func (a *RedisAdapter) Start() {
 	if !a.started {
 		a.started = true
 		errCh := make(chan error)
-		mp := newMessagePipeliner(a.bufferSize, a.redisClient, a.pipelineTimeout, errCh)
+		mp := newMessagePipeliner(a.bufferSize, a.RedisClient, a.pipelineTimeout, errCh)
 		go func() {
 			defer mp.pipeline.Close()
 			for {
@@ -155,14 +156,14 @@ func (a *redisAdapter) Start() {
 }
 
 // Write adds a log message to to an app-specific list in redis using ring-buffer-like semantics
-func (a *redisAdapter) Write(app string, messageBody string) error {
+func (a *RedisAdapter) Write(app string, messageBody string) error {
 	a.messageChannel <- newMessage(app, messageBody)
 	return nil
 }
 
 // Read retrieves a specified number of log lines from an app-specific list in redis
-func (a *redisAdapter) Read(app string, lines int) ([]string, error) {
-	stringSliceCmd := a.redisClient.LRange(app, int64(-1*lines), -1)
+func (a *RedisAdapter) Read(app string, lines int) ([]string, error) {
+	stringSliceCmd := a.RedisClient.LRange(app, int64(-1*lines), -1)
 	result, err := stringSliceCmd.Result()
 	if err != nil {
 		return nil, err
@@ -174,19 +175,19 @@ func (a *redisAdapter) Read(app string, lines int) ([]string, error) {
 }
 
 // Destroy deletes an app-specific list from redis
-func (a *redisAdapter) Destroy(app string) error {
-	if err := a.redisClient.Del(app).Err(); err != nil {
+func (a *RedisAdapter) Destroy(app string) error {
+	if err := a.RedisClient.Del(app).Err(); err != nil {
 		return err
 	}
 	return nil
 }
 
 // Reopen the storage adapter-- in the case of this implementation, a no-op
-func (a *redisAdapter) Reopen() error {
+func (a *RedisAdapter) Reopen() error {
 	return nil
 }
 
 // Stop the storage adapter. Additional writes may not be performed after stopping.
-func (a *redisAdapter) Stop() {
+func (a *RedisAdapter) Stop() {
 	close(a.stopCh)
 }

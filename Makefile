@@ -16,3 +16,10 @@ run:
 
 stop-deps:
 	@docker-compose --project-name mystack-logger down
+
+test: deps
+	@ginkgo -r .
+	@make test-fluentd-plugin
+
+test-fluentd-plugin:
+	@cd fluentd/opt/fluentd/mystack-output && rake test && cd ../../../..
