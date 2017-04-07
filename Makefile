@@ -14,6 +14,13 @@ cross-build-linux-amd64:
 run:
 	@go run main.go start
 
+setup-ci:
+	@go get -u github.com/golang/dep/...
+	@go get github.com/onsi/ginkgo/ginkgo
+	@go get github.com/wadey/gocovmerge
+	@dep ensure
+	@cd ./fluentd/opt/fluentd/mystack-output && bundle install && cd ../../../..
+
 stop-deps:
 	@docker-compose --project-name mystack-logger down
 
