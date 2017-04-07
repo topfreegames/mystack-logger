@@ -7,4 +7,5 @@ type Adapter interface {
 	Read(string, int) ([]string, error)
 	Destroy(string) error
 	Stop()
+	Healthcheck() (string, error)
 }

@@ -24,17 +24,19 @@ var (
 	podRegex = regexp.MustCompile(podPattern)
 )
 
-func handle(rawMessage []byte, storageAdapter storage.Adapter) error {
+// Handle the messages
+func Handle(rawMessage []byte, storageAdapter storage.Adapter) error {
 	message := new(Message)
 	if err := json.Unmarshal(rawMessage, message); err != nil {
 		return err
 	}
 	labels := message.Kubernetes.Labels
-	storageAdapter.Write(fmt.Sprintf("%s-%s", labels["app"], labels["mystack/owner"]), buildApplicationLogMessage(message))
+	storageAdapter.Write(fmt.Sprintf("%s-%s", labels["app"], labels["mystack/owner"]), BuildApplicationLogMessage(message))
 	return nil
 }
 
-func buildApplicationLogMessage(message *Message) string {
+// BuildApplicationLogMessage from message
+func BuildApplicationLogMessage(message *Message) string {
 	p := podRegex.FindStringSubmatch(message.Kubernetes.PodName)
 	tag := fmt.Sprintf(
 		"%s.%s",

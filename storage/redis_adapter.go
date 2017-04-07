@@ -161,6 +161,12 @@ func (a *RedisAdapter) Write(app string, messageBody string) error {
 	return nil
 }
 
+// Healthcheck should return a error if storageAdapter is not available
+func (a *RedisAdapter) Healthcheck() (string, error) {
+	pingCmd := a.RedisClient.Ping()
+	return pingCmd.Result()
+}
+
 // Read retrieves a specified number of log lines from an app-specific list in redis
 func (a *RedisAdapter) Read(app string, lines int) ([]string, error) {
 	stringSliceCmd := a.RedisClient.LRange(app, int64(-1*lines), -1)

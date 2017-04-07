@@ -1,4 +1,3 @@
-// mystack-controller api
 // https://github.com/topfreegames/mystack-logger
 //
 // Licensed under the MIT license:
@@ -23,6 +22,12 @@ type HealthcheckHandler struct {
 func (h *HealthcheckHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	l := loggerFromContext(r.Context())
 	l.Debug("Performing healthcheck...")
+	_, err := h.storageAdapter.Healthcheck()
+	if err != nil {
+		l.Error(err)
+		h.App.HandleError(w, http.StatusBadRequest, "error performing healthcheck", err)
+		return
+	}
 	Write(w, http.StatusOK, `{"healthy": true}`)
 	l.Debug("Healthcheck done.")
 }

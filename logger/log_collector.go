@@ -16,8 +16,7 @@ import (
 	"github.com/topfreegames/mystack-logger/storage"
 )
 
-// LogCollector is the the module that will grab logs
-// from nsq and write them into redis
+// LogCollector is the the module that will grab logs // from nsq and write them into redis
 type LogCollector struct {
 	config          *viper.Viper
 	storageAdapter  storage.Adapter
@@ -26,7 +25,7 @@ type LogCollector struct {
 	nsqLogsTopic    string
 	nsqdURL         string
 	redisURL        string
-	listening       bool
+	Listening       bool
 	stopTimeout     time.Duration
 }
 
@@ -69,10 +68,10 @@ func (l *LogCollector) configureNsqConsumer() error {
 
 // Start starts logcollector
 func (l *LogCollector) Start() error {
-	if !l.listening {
-		l.listening = true
+	if !l.Listening {
+		l.Listening = true
 		l.nsqConsumer.AddConcurrentHandlers(nsq.HandlerFunc(func(msg *nsq.Message) error {
-			if err := handle(msg.Body, l.storageAdapter); err != nil {
+			if err := Handle(msg.Body, l.storageAdapter); err != nil {
 				msg.Requeue(-1)
 				return err
 			}
