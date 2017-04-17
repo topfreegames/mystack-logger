@@ -24,6 +24,34 @@ type LogsHandler struct {
 	logger         *logrus.Logger
 }
 
+func NewLogsHandler(
+	app *App,
+	storageAdapter storage.Adapter,
+	logger *logrus.Logger,
+) *LogsHandler {
+	return &LogsHandler{
+		App:            app,
+		storageAdapter: storageAdapter,
+		logger:         logger,
+	}
+}
+
+func getVars(r *http.Request) (string, string) {
+	vars := mux.Vars(r)
+	app := vars["app"]
+	user := vars["user"]
+
+	splited := strings.Split(r.URL.Path, "/")
+	if len(app) == 0 {
+		app = splited[5]
+	}
+	if len(user) == 0 {
+		user = splited[3]
+	}
+
+	return app, user
+}
+
 //ServeHTTP method
 func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
@@ -36,9 +64,8 @@ func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	vars := mux.Vars(r)
-	app := vars["app"]
-	user := vars["user"]
+
+	app, user := getVars(r)
 	log := l.logger.WithFields(logrus.Fields{
 		"user":   user,
 		"app":    app,
