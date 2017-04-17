@@ -1,5 +1,5 @@
 {
-    "memo": "2ec32f1233a97f0b94de3b05ba3d1b8899d919880a3246f0e33199f2fa4f6eec",
+    "memo": "d2d69d9b5630a1b867d70251a604e7d7230730a457502b286d6bf06ec2c48966",
     "projects": [
         {
             "name": "github.com/fsnotify/fsnotify",
@@ -83,6 +83,50 @@
             ]
         },
         {
+            "name": "github.com/onsi/ginkgo",
+            "version": "v1.3.1",
+            "revision": "77a8c1e5c40d6bb6c5eb4dd4bdce9763564f6298",
+            "packages": [
+                ".",
+                "config",
+                "internal/codelocation",
+                "internal/containernode",
+                "internal/failer",
+                "internal/leafnodes",
+                "internal/remote",
+                "internal/spec",
+                "internal/spec_iterator",
+                "internal/specrunner",
+                "internal/suite",
+                "internal/testingtproxy",
+                "internal/writer",
+                "reporters",
+                "reporters/stenographer",
+                "reporters/stenographer/support/go-colorable",
+                "reporters/stenographer/support/go-isatty",
+                "types"
+            ]
+        },
+        {
+            "name": "github.com/onsi/gomega",
+            "version": "v1.1.0",
+            "revision": "334b8f472b3af5d541c5642701c1e29e2126f486",
+            "packages": [
+                ".",
+                "format",
+                "internal/assertion",
+                "internal/asyncassertion",
+                "internal/oraclematcher",
+                "internal/testingtsupport",
+                "matchers",
+                "matchers/support/goraph/bipartitegraph",
+                "matchers/support/goraph/edge",
+                "matchers/support/goraph/node",
+                "matchers/support/goraph/util",
+                "types"
+            ]
+        },
+        {
             "name": "github.com/pelletier/go-buffruneio",
             "version": "v0.2.0",
             "revision": "c37440a7cf42ac63b919c752ca73a85067e05992",
@@ -94,6 +138,14 @@
             "name": "github.com/pelletier/go-toml",
             "version": "v0.5.0",
             "revision": "13d49d4606eb801b8f01ae542b4afc4c6ee3d84a",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/satori/go.uuid",
+            "version": "v1.1.0",
+            "revision": "03612e14496bef24a0d0c0b912407851329b64c7",
             "packages": [
                 "."
             ]
@@ -117,8 +169,8 @@
         },
         {
             "name": "github.com/spf13/cast",
-            "version": "v1.0.0",
-            "revision": "ce135a4ebeee6cfe9a26c93ee0d37825f26113c7",
+            "version": "v1.1.0",
+            "revision": "acbeb36b902d72a7a4c18e8f3241075e7ab763e4",
             "packages": [
                 "."
             ]
@@ -126,7 +178,7 @@
         {
             "name": "github.com/spf13/cobra",
             "branch": "master",
-            "revision": "7aeaa2cce6ae7e18d2a6ee597b60ee137e999bd9",
+            "revision": "5deb57bbca49eb370538fc295ba4b2988f9f5e09",
             "packages": [
                 "."
             ]
@@ -142,7 +194,7 @@
         {
             "name": "github.com/spf13/pflag",
             "branch": "master",
-            "revision": "9a906f17374922ed0f74e1b2f593d3723f2ffb00",
+            "revision": "e453343e6260b4a3a89f1f0e10a2fbb07f8d9750",
             "packages": [
                 "."
             ]
@@ -150,7 +202,7 @@
         {
             "name": "github.com/spf13/viper",
             "branch": "master",
-            "revision": "84f94806c67f59dd7ae87bc5351f7a9c94a4558d",
+            "revision": "0967fc9aceab2ce9da34061253ac10fb99bba5b2",
             "packages": [
                 "."
             ]
@@ -158,7 +210,7 @@
         {
             "name": "golang.org/x/sys",
             "branch": "master",
-            "revision": "493114f68206f85e7e333beccfabc11e98cba8dd",
+            "revision": "f3918c30c5c2cb527c0b071a27c35120a6c0719a",
             "packages": [
                 "unix"
             ]
@@ -192,7 +244,7 @@
         {
             "name": "gopkg.in/yaml.v2",
             "branch": "v2",
-            "revision": "a3f3340b5840cee44f372bddb5880fcbc419b46a",
+            "revision": "cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b",
             "packages": [
                 "."
             ]

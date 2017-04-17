@@ -9,3 +9,7 @@ redis:
   url: redis://:@localhost:6399
   pipeline-timeout: 5
   pipeline-length: 10
+oauth:
+  acceptedDomains:
+    - example.com
+    - other.example.com
