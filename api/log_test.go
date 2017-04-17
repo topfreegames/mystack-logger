@@ -13,7 +13,6 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/sirupsen/logrus"
 
 	. "github.com/topfreegames/mystack-logger/api"
 )
@@ -21,14 +20,12 @@ import (
 var _ = Describe("Log Handler", func() {
 	var request *http.Request
 	var recorder *httptest.ResponseRecorder
-	var logger *logrus.Logger
 	var log *LogsHandler
 
 	BeforeEach(func() {
 		// Record HTTP responses.
 		recorder = httptest.NewRecorder()
 
-		logger = logrus.New()
 		log = NewLogsHandler(app, storageAdapter, logger)
 	})
 
