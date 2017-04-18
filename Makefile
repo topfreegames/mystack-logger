@@ -18,6 +18,7 @@ setup-ci:
 	@go get -u github.com/golang/dep/...
 	@go get github.com/onsi/ginkgo/ginkgo
 	@go get github.com/wadey/gocovmerge
+	@dep init
 	@dep ensure
 	@cd ./fluentd/opt/fluentd/mystack-output && bundle install && cd ../../../..
 
