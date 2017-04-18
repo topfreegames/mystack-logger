@@ -27,6 +27,7 @@ type App struct {
 	Logger         *logrus.Logger
 	Router         *mux.Router
 	Server         *http.Server
+	EmailDomain    []string
 }
 
 //NewApp is the app constructor
@@ -40,6 +41,7 @@ func NewApp(
 		Address:        fmt.Sprintf("%s:%d", host, port),
 		Logger:         logger,
 		storageAdapter: storageAdapter,
+		EmailDomain:    config.GetStringSlice("oauth.acceptedDomains"),
 	}
 	err := a.configureApp()
 	if err != nil {
@@ -68,6 +70,7 @@ func (a *App) getRouter() *mux.Router {
 		},
 		&LoggingMiddleware{App: a},
 		&VersionMiddleware{},
+		&AccessMiddleware{App: a},
 	)).Methods("GET").Name("logs")
 
 	return r

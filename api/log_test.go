@@ -13,22 +13,27 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	. "github.com/topfreegames/mystack-logger/api"
 )
 
 var _ = Describe("Log Handler", func() {
 	var request *http.Request
 	var recorder *httptest.ResponseRecorder
+	var log *LogsHandler
 
 	BeforeEach(func() {
 		// Record HTTP responses.
 		recorder = httptest.NewRecorder()
+
+		log = NewLogsHandler(app, storageAdapter, logger)
 	})
 
 	Describe("GET /logs/users/{user}/apps/{app}", func() {
 		Context("when all services healthy", func() {
 			It("returns a status code of 204 if no logs for app", func() {
 				request, _ = http.NewRequest("GET", "/logs/users/testuser/apps/testapp", nil)
-				app.Router.ServeHTTP(recorder, request)
+				log.ServeHTTP(recorder, request)
 				Expect(recorder.Code).To(Equal(204))
 			})
 
@@ -44,7 +49,7 @@ var _ = Describe("Log Handler", func() {
 				}, 10).Should(Equal(5))
 
 				request, _ = http.NewRequest("GET", "/logs/users/testuser/apps/testapp2", nil)
-				app.Router.ServeHTTP(recorder, request)
+				log.ServeHTTP(recorder, request)
 				fmt.Printf(recorder.Body.String())
 				Expect(recorder.Body.String()).To(Equal(`message 0
 message 1
@@ -68,7 +73,7 @@ message 4
 				}, 10).Should(Equal(2))
 
 				request, _ = http.NewRequest("GET", "/logs/users/testuser/apps/testapp2?lines=2", nil)
-				app.Router.ServeHTTP(recorder, request)
+				log.ServeHTTP(recorder, request)
 				fmt.Printf(recorder.Body.String())
 				Expect(recorder.Body.String()).To(Equal(`message 3
 message 4
@@ -76,7 +81,6 @@ message 4
 				err := storageAdapter.Destroy("testapp2-testuser")
 				Expect(err).NotTo(HaveOccurred())
 			})
-
 		})
 	})
 })
