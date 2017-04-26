@@ -1,17 +1,16 @@
----
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    name: mystack-logger
   name: mystack-logger
   namespace: mystack
+  labels:
+    mystack/routable: "true"
 spec:
+  selector:
+    app: mystack-logger
   ports:
     - port: 5000
       targetPort: 5000
-  selector:
-    app: mystack-logger
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
