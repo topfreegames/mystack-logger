@@ -39,17 +39,21 @@ func NewLogsHandler(
 func getVars(r *http.Request) (string, string) {
 	vars := mux.Vars(r)
 	app := vars["app"]
-	user := vars["user"]
-
 	splited := strings.Split(r.URL.Path, "/")
 	if len(app) == 0 {
-		app = splited[5]
-	}
-	if len(user) == 0 {
-		user = splited[3]
+		app = splited[3]
 	}
 
+	email := emailFromCtx(r.Context())
+	user := userFromEmail(email)
+
 	return app, user
+}
+
+func userFromEmail(email string) string {
+	user := strings.Split(email, "@")[0]
+	user = strings.Replace(user, ".", "-", -1)
+	return user
 }
 
 //ServeHTTP method

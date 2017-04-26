@@ -62,7 +62,7 @@ func (a *App) getRouter() *mux.Router {
 		&VersionMiddleware{},
 	)).Methods("GET").Name("healthcheck")
 
-	r.Handle("/logs/users/{user}/apps/{app}", Chain(
+	r.Handle("/logs/apps/{app}", Chain(
 		&LogsHandler{
 			App:            a,
 			storageAdapter: a.storageAdapter,
