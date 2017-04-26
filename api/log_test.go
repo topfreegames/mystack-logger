@@ -29,11 +29,12 @@ var _ = Describe("Log Handler", func() {
 		log = NewLogsHandler(app, storageAdapter, logger)
 	})
 
-	Describe("GET /logs/users/{user}/apps/{app}", func() {
+	Describe("GET /logs/apps/{app}", func() {
 		Context("when all services healthy", func() {
 			It("returns a status code of 204 if no logs for app", func() {
-				request, _ = http.NewRequest("GET", "/logs/users/testuser/apps/testapp", nil)
-				log.ServeHTTP(recorder, request)
+				request, _ = http.NewRequest("GET", "/logs/apps/testapp", nil)
+				ctx := NewContextWithEmail(request.Context(), "testuser@example.com")
+				log.ServeHTTP(recorder, request.WithContext(ctx))
 				Expect(recorder.Code).To(Equal(204))
 			})
 
@@ -48,8 +49,9 @@ var _ = Describe("Log Handler", func() {
 					return len(messages)
 				}, 10).Should(Equal(5))
 
-				request, _ = http.NewRequest("GET", "/logs/users/testuser/apps/testapp2", nil)
-				log.ServeHTTP(recorder, request)
+				request, _ = http.NewRequest("GET", "/logs/apps/testapp2", nil)
+				ctx := NewContextWithEmail(request.Context(), "testuser@example.com")
+				log.ServeHTTP(recorder, request.WithContext(ctx))
 				fmt.Printf(recorder.Body.String())
 				Expect(recorder.Body.String()).To(Equal(`message 0
 message 1
@@ -72,8 +74,9 @@ message 4
 					return len(messages)
 				}, 10).Should(Equal(2))
 
-				request, _ = http.NewRequest("GET", "/logs/users/testuser/apps/testapp2?lines=2", nil)
-				log.ServeHTTP(recorder, request)
+				request, _ = http.NewRequest("GET", "/logs/apps/testapp2?lines=2", nil)
+				ctx := NewContextWithEmail(request.Context(), "testuser@example.com")
+				log.ServeHTTP(recorder, request.WithContext(ctx))
 				fmt.Printf(recorder.Body.String())
 				Expect(recorder.Body.String()).To(Equal(`message 3
 message 4
