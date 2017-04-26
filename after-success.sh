@@ -6,9 +6,7 @@ DOCKER_REGISTRY=${DOCKER_REGISTRY:=quay.io}
 
 make build-docker
 
-if [ -v $DOCKER_USER ] || [ -v $DOCKER_PASSWORD ]; then
-  docker login --username="$DOCKER_USER" --password="$DOCKER_PASSWORD" $DOCKER_REGISTRY
-fi
+docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
 
 # If this is not a pull request, update the branch's docker tag.
 if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
