@@ -18,7 +18,7 @@ if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
 
   # If this commit has a tag, use on the registry too.
   if ! test -z $TRAVIS_TAG; then
-    docker tag myapp $REPO:${TRAVIS_TAG} \
+    docker tag mystack-logger:latest $REPO:${TRAVIS_TAG} \
       && docker push $REPO:${TRAVIS_TAG};
   fi
 fi
@@ -32,7 +32,7 @@ if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
 
   # If this commit has a tag, use on the registry too.
   if ! test -z $TRAVIS_TAG; then
-    docker tag myapp $REPO_FLUENTD:${TRAVIS_TAG} \
+    docker tag mystack-fluentd:latest $REPO_FLUENTD:${TRAVIS_TAG} \
       && docker push $REPO_FLUENTD:${TRAVIS_TAG};
   fi
 fi
