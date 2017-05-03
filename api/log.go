@@ -113,6 +113,10 @@ func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	if follow {
+		// hack fox nginx
+		w.Header().Add("X-Accel-Buffering", "no")
+	}
 	fw := flushWriter{w: w}
 	if f, ok := w.(http.Flusher); ok {
 		fw.f = f
