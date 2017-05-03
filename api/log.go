@@ -134,7 +134,9 @@ func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				if err := json.Unmarshal(msg, message); err != nil {
 					log.Error(err)
 				} else {
-					fw.Write([]byte(fmt.Sprintf("%s\n", strings.TrimSuffix(logger.BuildApplicationLogMessage(message), "\n"))))
+					if message.Kubernetes.Labels["app"] == app {
+						fw.Write([]byte(fmt.Sprintf("%s\n", strings.TrimSuffix(logger.BuildApplicationLogMessage(message), "\n"))))
+					}
 				}
 			case <-closedChan:
 				l.App.Collector.RemoveFollower(f)
