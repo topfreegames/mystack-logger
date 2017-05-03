@@ -55,7 +55,7 @@ var _ = Describe("Healthcheck Handler", func() {
 				config.Set("redis.url", "redis://:@localhost:11111")
 				logger := logrus.New()
 				storageAdapter, _ := storage.NewRedisStorageAdapter(config)
-				app, _ := api.NewApp("localhost", 8686, config, logger, storageAdapter)
+				app, _ := api.NewApp("localhost", 8686, config, logger, storageAdapter, collector, false)
 				app.Router.ServeHTTP(recorder, request)
 				var obj map[string]interface{}
 				err := json.Unmarshal([]byte(recorder.Body.String()), &obj)

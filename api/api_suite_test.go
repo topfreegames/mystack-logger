@@ -12,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/topfreegames/mystack-logger/api"
+	"github.com/topfreegames/mystack-logger/logger"
 	"github.com/topfreegames/mystack-logger/storage"
 
 	"testing"
@@ -20,7 +21,8 @@ import (
 var config *viper.Viper
 var app *api.App
 var storageAdapter storage.Adapter
-var logger *logrus.Logger
+var log *logrus.Logger
+var collector *logger.LogCollector
 
 func TestStorage(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -31,7 +33,8 @@ var _ = BeforeSuite(func() {
 	config = viper.New()
 	config.Set("log-buffer-size", 10)
 	config.Set("redis.pipeline-timeout", 1)
-	logger = logrus.New()
+	log = logrus.New()
 	storageAdapter, _ = storage.NewRedisStorageAdapter(config)
-	app, _ = api.NewApp("localhost", 8686, config, logger, storageAdapter)
+	collector = logger.NewLogCollector(storageAdapter, config)
+	app, _ = api.NewApp("localhost", 8686, config, log, storageAdapter, collector, false)
 })

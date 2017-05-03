@@ -17,6 +17,7 @@ import (
 
 var bind string
 var port int
+var unsecure bool
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
@@ -47,7 +48,7 @@ var startCmd = &cobra.Command{
 		defer collector.Stop()
 		log.Info("log collector running")
 
-		app, err := api.NewApp(bind, port, config, log, storageAdapter)
+		app, err := api.NewApp(bind, port, config, log, storageAdapter, collector, unsecure)
 
 		if err != nil {
 			log.Panic(err)
@@ -78,6 +79,7 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
+	startCmd.Flags().BoolVar(&unsecure, "unsecure", false, "unsecure api (for development, will default user to testuser")
 	startCmd.Flags().StringVarP(&bind, "bind", "b", "0.0.0.0", "the address that mystack logger api will bind to")
 	startCmd.Flags().IntVarP(&port, "port", "p", 5000, "the address that mystack logger must listen")
 	RootCmd.AddCommand(startCmd)

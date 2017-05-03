@@ -20,13 +20,13 @@ import (
 var _ = Describe("Log Handler", func() {
 	var request *http.Request
 	var recorder *httptest.ResponseRecorder
-	var log *LogsHandler
+	var logHandler *LogsHandler
 
 	BeforeEach(func() {
 		// Record HTTP responses.
 		recorder = httptest.NewRecorder()
 
-		log = NewLogsHandler(app, storageAdapter, logger)
+		logHandler = NewLogsHandler(app, storageAdapter, log)
 	})
 
 	Describe("GET /logs/apps/{app}", func() {
@@ -34,7 +34,7 @@ var _ = Describe("Log Handler", func() {
 			It("returns a status code of 204 if no logs for app", func() {
 				request, _ = http.NewRequest("GET", "/logs/apps/testapp", nil)
 				ctx := NewContextWithEmail(request.Context(), "testuser@example.com")
-				log.ServeHTTP(recorder, request.WithContext(ctx))
+				logHandler.ServeHTTP(recorder, request.WithContext(ctx))
 				Expect(recorder.Code).To(Equal(204))
 			})
 
@@ -51,8 +51,7 @@ var _ = Describe("Log Handler", func() {
 
 				request, _ = http.NewRequest("GET", "/logs/apps/testapp2", nil)
 				ctx := NewContextWithEmail(request.Context(), "testuser@example.com")
-				log.ServeHTTP(recorder, request.WithContext(ctx))
-				fmt.Printf(recorder.Body.String())
+				logHandler.ServeHTTP(recorder, request.WithContext(ctx))
 				Expect(recorder.Body.String()).To(Equal(`message 0
 message 1
 message 2
@@ -76,8 +75,7 @@ message 4
 
 				request, _ = http.NewRequest("GET", "/logs/apps/testapp2?lines=2", nil)
 				ctx := NewContextWithEmail(request.Context(), "testuser@example.com")
-				log.ServeHTTP(recorder, request.WithContext(ctx))
-				fmt.Printf(recorder.Body.String())
+				logHandler.ServeHTTP(recorder, request.WithContext(ctx))
 				Expect(recorder.Body.String()).To(Equal(`message 3
 message 4
 `))

@@ -16,7 +16,7 @@ var _ = Describe("App", func() {
 
 	Describe("NewApp", func() {
 		It("should return new app", func() {
-			application, err := api.NewApp("0.0.0.0", 8686, config, logger, storageAdapter)
+			application, err := api.NewApp("0.0.0.0", 8686, config, log, storageAdapter, collector, false)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(application).NotTo(BeNil())
 			Expect(application.Address).NotTo(Equal(""))

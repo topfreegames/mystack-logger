@@ -8,6 +8,7 @@
 package logger
 
 import (
+	"container/list"
 	"errors"
 	"time"
 
@@ -15,6 +16,19 @@ import (
 	"github.com/spf13/viper"
 	"github.com/topfreegames/mystack-logger/storage"
 )
+
+// LogFollower struct
+type LogFollower struct {
+	followerChan chan []byte
+}
+
+// NewLogFollower ctor
+func NewLogFollower(followerChan chan []byte) *LogFollower {
+	f := &LogFollower{
+		followerChan: followerChan,
+	}
+	return f
+}
 
 // LogCollector is the the module that will grab logs // from nsq and write them into redis
 type LogCollector struct {
@@ -27,6 +41,7 @@ type LogCollector struct {
 	redisURL        string
 	Listening       bool
 	stopTimeout     time.Duration
+	followers       list.List
 }
 
 // NewLogCollector instantiates a new LogCollector
@@ -38,6 +53,16 @@ func NewLogCollector(storageAdapter storage.Adapter, config *viper.Viper) *LogCo
 	l.configure()
 	l.configureNsqConsumer()
 	return l
+}
+
+// AddFollower adds a follower
+func (l *LogCollector) AddFollower(follower *LogFollower) *list.Element {
+	return l.followers.PushBack(follower)
+}
+
+// RemoveFollower remover a follower
+func (l *LogCollector) RemoveFollower(follower *list.Element) {
+	l.followers.Remove(follower)
 }
 
 func (l *LogCollector) configure() {
@@ -71,6 +96,9 @@ func (l *LogCollector) Start() error {
 	if !l.Listening {
 		l.Listening = true
 		l.nsqConsumer.AddConcurrentHandlers(nsq.HandlerFunc(func(msg *nsq.Message) error {
+			for e := l.followers.Front(); e != nil; e = e.Next() {
+				e.Value.(*LogFollower).followerChan <- msg.Body
+			}
 			if err := Handle(msg.Body, l.storageAdapter); err != nil {
 				msg.Requeue(-1)
 				return err

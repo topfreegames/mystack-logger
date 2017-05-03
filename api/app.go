@@ -16,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/topfreegames/mystack-logger/errors"
+	"github.com/topfreegames/mystack-logger/logger"
 	"github.com/topfreegames/mystack-logger/storage"
 )
 
@@ -28,6 +29,8 @@ type App struct {
 	Router         *mux.Router
 	Server         *http.Server
 	EmailDomain    []string
+	Unsecure       bool
+	Collector      *logger.LogCollector
 }
 
 //NewApp is the app constructor
@@ -35,13 +38,17 @@ func NewApp(
 	host string, port int,
 	config *viper.Viper,
 	logger *logrus.Logger,
-	storageAdapter storage.Adapter) (*App, error) {
+	storageAdapter storage.Adapter,
+	collector *logger.LogCollector,
+	unsecure bool) (*App, error) {
 	a := &App{
 		Config:         config,
 		Address:        fmt.Sprintf("%s:%d", host, port),
 		Logger:         logger,
 		storageAdapter: storageAdapter,
 		EmailDomain:    config.GetStringSlice("oauth.acceptedDomains"),
+		Unsecure:       unsecure,
+		Collector:      collector,
 	}
 	err := a.configureApp()
 	if err != nil {

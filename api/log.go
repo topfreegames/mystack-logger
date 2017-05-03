@@ -7,13 +7,16 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"github.com/topfreegames/mystack-logger/logger"
 	"github.com/topfreegames/mystack-logger/storage"
 )
 
@@ -24,6 +27,7 @@ type LogsHandler struct {
 	logger         *logrus.Logger
 }
 
+// NewLogsHandler ctor
 func NewLogsHandler(
 	app *App,
 	storageAdapter storage.Adapter,
@@ -56,15 +60,37 @@ func userFromEmail(email string) string {
 	return user
 }
 
+type flushWriter struct {
+	f http.Flusher
+	w io.Writer
+}
+
+func (fw *flushWriter) Write(p []byte) (n int, err error) {
+	n, err = fw.w.Write(p)
+	if fw.f != nil {
+		fw.f.Flush()
+	}
+	return
+}
+
 //ServeHTTP method
 func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	lines := 50
+	follow := false
 	var err error
 	if args, ok := query["lines"]; ok {
 		if len(args) > 0 {
 			if lines, err = strconv.Atoi(args[0]); err != nil {
 				lines = 50
+			}
+		}
+	}
+
+	if args, ok := query["follow"]; ok {
+		if len(args) > 0 {
+			if args[0] == "true" {
+				follow = true
 			}
 		}
 	}
@@ -87,8 +113,35 @@ func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	fw := flushWriter{w: w}
+	if f, ok := w.(http.Flusher); ok {
+		fw.f = f
+	}
 	for _, line := range logs {
-		fmt.Fprintf(w, "%s\n", strings.TrimSuffix(line, "\n"))
+		fw.Write([]byte(fmt.Sprintf("%s\n", strings.TrimSuffix(line, "\n"))))
+	}
+
+	if follow {
+		followerChan := make(chan []byte)
+		follower := logger.NewLogFollower(followerChan)
+		f := l.App.Collector.AddFollower(follower)
+		closedChan := w.(http.CloseNotifier).CloseNotify()
+		close := false
+		for !close {
+			select {
+			case msg := <-followerChan:
+				message := new(logger.Message)
+				if err := json.Unmarshal(msg, message); err != nil {
+					log.Error(err)
+				} else {
+					fw.Write([]byte(fmt.Sprintf("%s\n", strings.TrimSuffix(logger.BuildApplicationLogMessage(message), "\n"))))
+				}
+			case <-closedChan:
+				l.App.Collector.RemoveFollower(f)
+				log.Debug("exiting log streaming...")
+				close = true
+			}
+		}
 	}
 	log.Debug("logs done.")
 }
