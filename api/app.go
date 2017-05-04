@@ -11,6 +11,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -90,7 +91,11 @@ func (a *App) configureApp() error {
 
 func (a *App) configureServer() {
 	a.Router = a.getRouter()
-	a.Server = &http.Server{Addr: a.Address, Handler: a.Router}
+	a.Server = &http.Server{
+		Addr:         a.Address,
+		Handler:      a.Router,
+		WriteTimeout: 20 * time.Minute,
+	}
 }
 
 //HandleError writes an error response with message and status
