@@ -52,7 +52,7 @@ func (m *AccessMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		accessToken := r.Header.Get("Authorization")
 		accessToken = strings.TrimPrefix(accessToken, "Bearer ")
 
-		url := fmt.Sprintf("http://mystack-controller/users?token=%s", accessToken)
+		url := fmt.Sprintf("http://mystack-controller:8080/users?token=%s", accessToken)
 		resp, err := http.Get(url)
 		if err != nil {
 			m.App.HandleError(w, http.StatusInternalServerError, "access error", err)
