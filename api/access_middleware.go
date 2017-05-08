@@ -10,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/topfreegames/mystack-logger/errors"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -47,52 +46,35 @@ func (m *AccessMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ctx := NewContextWithEmail(r.Context(), "testuser")
 		m.next.ServeHTTP(w, r.WithContext(ctx))
 	} else {
-		token := r.Header.Get("Authorization")
-		token = strings.TrimPrefix(token, "Bearer ")
-		url := fmt.Sprintf("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s", token)
-		resp, err := http.Get(url)
+		logger := loggerFromContext(r.Context())
+		logger.Info("Checking access token")
 
+		accessToken := r.Header.Get("Authorization")
+		accessToken = strings.TrimPrefix(accessToken, "Bearer ")
+
+		url := fmt.Sprintf("http://mystack-controller:8080/users?token=%s", accessToken)
+		resp, err := http.Get(url)
 		if err != nil {
-			logger.WithError(err).Error("error fetching googleapis")
-			m.App.HandleError(w, http.StatusInternalServerError, "Error fetching googleapis", err)
+			m.App.HandleError(w, http.StatusInternalServerError, "access error", err)
 			return
 		}
 
 		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
+		bts, _ := ioutil.ReadAll(resp.Body)
+
+		if resp.StatusCode != http.StatusOK {
+			m.App.HandleError(w, resp.StatusCode, "access error", fmt.Errorf(string(bts)))
+			return
+		}
+
+		obj := make(map[string]string)
+		err = json.Unmarshal(bts, &obj)
 		if err != nil {
-			logger.WithError(err).Error("error parsing response")
-			m.App.HandleError(w, http.StatusInternalServerError, "Error parsing response", err)
+			m.App.HandleError(w, http.StatusUnauthorized, "access error", err)
 			return
 		}
 
-		if resp.StatusCode == http.StatusBadRequest {
-			logger.WithError(err).Error("error validating access token")
-			err := errors.NewAccessError("Unauthorized access token", fmt.Errorf(string(body)))
-			m.App.HandleError(w, http.StatusUnauthorized, "Unauthorized access token", err)
-			return
-		}
-
-		if resp.StatusCode != 200 {
-			logger.WithError(err).Error("invalid access token")
-			err := errors.NewAccessError("invalid access token", fmt.Errorf(string(body)))
-			m.App.HandleError(w, resp.StatusCode, "error validating access token", err)
-			return
-		}
-
-		var bodyObj map[string]interface{}
-		json.Unmarshal(body, &bodyObj)
-		email := bodyObj["email"].(string)
-		if !m.verifyEmailDomain(email) {
-			logger.WithError(err).Error("Invalid email")
-			err := errors.NewAccessError(
-				"authorization access error",
-				fmt.Errorf("the email on OAuth authorization is not from domain %s", m.App.EmailDomain),
-			)
-			m.App.HandleError(w, http.StatusUnauthorized, "error validating access token", err)
-			return
-		}
-		ctx := NewContextWithEmail(r.Context(), email)
+		ctx := NewContextWithEmail(r.Context(), obj["email"])
 
 		logger.Info("Access token checked")
 		m.next.ServeHTTP(w, r.WithContext(ctx))
