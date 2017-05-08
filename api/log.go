@@ -139,6 +139,7 @@ func (l *LogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					log.Error(err)
 				} else {
 					if message.Kubernetes.Labels["app"] == app && message.Kubernetes.Labels["mystack/owner"] == user {
+						log.WithField("mystack/owner", message.Kubernetes.Labels["mystack/owner"]).Debugf("new log line")
 						fw.Write([]byte(fmt.Sprintf("%s\n", strings.TrimSuffix(logger.BuildApplicationLogMessage(message), "\n"))))
 					}
 				}
