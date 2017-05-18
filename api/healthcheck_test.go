@@ -60,7 +60,7 @@ var _ = Describe("Healthcheck Handler", func() {
 				var obj map[string]interface{}
 				err := json.Unmarshal([]byte(recorder.Body.String()), &obj)
 				Expect(err).NotTo(HaveOccurred())
-				Expect(obj["code"]).To(Equal("OFF-001"))
+				Expect(obj["code"]).To(Equal("MST-001"))
 				Expect(obj["error"]).To(Equal("error performing healthcheck"))
 				Expect(obj["description"]).Should(SatisfyAny(
 					Equal("dial tcp [::1]:11111: getsockopt: connection refused"),
